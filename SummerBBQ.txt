@@ -3,4 +3,36 @@
 % Assignment: #4 Summer Barbeque
 % Description: Determine from the clues the full name of the family members in attendance, their relationship to Dan and Janet Smith, and the city where each had their home.
 
+% Define the First & Last Name
+firstname(george; natalie; robert; sara).
+lastname(green; mann; smith; west).
+name(firstname(X),lastname(Y)).
+
+% Define the Relation
+relation(brother; uncle; cousin; sister).
+relative(name(X,Y),relation(Z)).
+
+% Define the City
+city(boston; newyork; providence; chicago).
+hometown(name(X,Y),city(Z)).
+
+% Specify 1 to 1 for First & Last Name
+1 { name(X,Y) : firstname(X) } 1 :- lastname(Y).
+1 { name(X,Y) : lastname(Y) } 1 :- firstname(X).
+
+% Specify 1 to 1 for Person & City
+1 { hometown(X,Y) : name(X) } 1 :- city(Y).
+1 { hometown(X,Y) : city(Y) } 1 :- name(X).
+
+% Natalie, whose last name wasn't West, didn't live in Boston
+
+% Janet's cousin didn't live in New York though her last name was Mann
+
+% George didn't live in Providence. Sara's last name wasn't Green
+
+% Robert, who was Dan's uncle, didn't live in New York. Ms. Green lived in New York
+
+% Sara wasn't Janet's sister. Mr. Smith wasn't related to Janet
+
+% Dan's brother lived in Chicago. The man whose last name is West lives in Providence
 
