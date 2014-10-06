@@ -1,0 +1,6 @@
+% Name: Cory Siebler
+% Class: CSE 471
+% Assignment: #4 Summer Barbeque
+% Description: Determine from the clues the full name of the family members in attendance, their relationship to Dan and Janet Smith, and the city where each had their home.
+
+
