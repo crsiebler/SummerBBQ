@@ -1,38 +1,92 @@
 % Name: Cory Siebler
-% Class: CSE 471
-% Assignment: #4 Summer Barbeque
+% ASU ID: 1000832292
+% Class: CSE 471 MW 4:30-5:45
+% Assignment: #4 Summer Barbecue
 % Description: Determine from the clues the full name of the family members in attendance, their relationship to Dan and Janet Smith, and the city where each had their home.
 
 % Define the First & Last Name
 firstname(george; natalie; robert; sara).
 lastname(green; mann; smith; west).
-name(firstname(X),lastname(Y)).
 
 % Define the Relation
 relation(brother; uncle; cousin; sister).
-relative(name(X,Y),relation(Z)).
 
 % Define the City
 city(boston; newyork; providence; chicago).
-hometown(name(X,Y),city(Z)).
 
 % Specify 1 to 1 for First & Last Name
-1 { name(X,Y) : firstname(X) } 1 :- lastname(Y).
-1 { name(X,Y) : lastname(Y) } 1 :- firstname(X).
+1 { name(F,L) : firstname(F) } 1 :- lastname(L).
+1 { name(F,L) : lastname(L) } 1 :- firstname(F).
+
+% Specify 1 to 1 for Person & Relation
+1 { relative(F,L,R) : relation(R) } 1 :- name(F,L).
+1 { relative(F,L,R) : name(F,L) } 1 :- relation(R).
 
 % Specify 1 to 1 for Person & City
-1 { hometown(X,Y) : name(X) } 1 :- city(Y).
-1 { hometown(X,Y) : city(Y) } 1 :- name(X).
+1 { hometown(F,L,C) : name(F,L) } 1 :- city(C).
+1 { hometown(F,L,C) : city(C) } 1 :- name(F,L).
+
+% Gender relations
+:- lastname(L), relative(natalie,L,brother).
+:- lastname(L), relative(natalie,L,uncle).
+:- lastname(L), relative(sara,L,brother).
+:- lastname(L), relative(sara,L,uncle).
+:- lastname(L), relative(george,L,sister).
+:- lastname(L), relative(george,L,cousin).
+:- lastname(L), relative(robert,L,sister).
+:- lastname(L), relative(robert,L,cousin).
 
 % Natalie, whose last name wasn't West, didn't live in Boston
+:- name(natalie,west).
+:- lastname(L), hometown(natatlie,L,boston).
 
 % Janet's cousin didn't live in New York though her last name was Mann
+:- firstname(F), lastname(L), relative(F,L,cousin), hometown(F,L,newyork).
+:- not relative(_,mann,cousin).
 
 % George didn't live in Providence. Sara's last name wasn't Green
+:- lastname(L), hometown(george,L,providence).
+:- name(sara,green).
 
 % Robert, who was Dan's uncle, didn't live in New York. Ms. Green lived in New York
+:- not relative(robert,_,uncle).
+:- lastname(L), hometown(robert,L,newyork).
+:- not hometown(_,green,newyork).
+:- name(george,green).
+:- name(robert,green).
 
 % Sara wasn't Janet's sister. Mr. Smith wasn't related to Janet
+:- lastname(L), relative(sara,L,sister).
+:- name(natalie,smith).
+:- name(sara,smith).
+:- firstname(F), relative(F,smith,sister).
+:- firstname(F), relative(F,smith,cousin).
 
 % Dan's brother lived in Chicago. The man whose last name is West lives in Providence
+hometown(F,L,chicago) :- name(F,L), relative(F,L,brother).
+relative(F,L,brother) :- name(F,L), hometown(F,L,chicago).
+:- hometown(natalie,_,chicago).
+:- hometown(sara,_,chicago).
+:- not hometown(_,west,providence).
+:- name(natalie,west).
+:- name(sara,west).
 
+%---------%
+% Display %
+%---------%
+#show name/2.
+#show hometown/3.
+#show relative/3.
+
+%-----------------%
+% Expected Result %
+%-----------------%
+% George Smith, Brother, Chicago
+% Natalie Green, Sister, New York
+% Robert West, Uncle, Providence
+% Sara Mann, Cousin, Boston
+
+%--------%
+% OUTPUT %
+%--------% 
+% name(george,smith) name(natalie,green) name(robert,west) name(sara,mann) relative(george,smith,brother) relative(natalie,green,sister) relative(robert,west,uncle) relative(sara,mann,cousin) hometown(george,smith,chicago) hometown(natalie,green,newyork) hometown(robert,west,providence) hometown(sara,mann,boston)
